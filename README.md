@@ -18,9 +18,25 @@ def arr_of_nums = [1, 2, 3];
 def boolean_variable = true;
 ```
 
+Define functions and use call expression.
+
 ```
 def factorial = func(x) { if (x == 0) { 1 } else { x * factorial(x - 1) } };
 factorial(4);
+```
+
+Use index expression.
+
+```
+def arr = [1, 2, 3];
+arr[0];
+```
+
+Use hashmap.
+
+```
+def mymap = {"name": "Rizzler", "version": 1};
+mymap["name"];
 ```
 
 #### Built-in Functions
