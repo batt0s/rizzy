@@ -2,15 +2,18 @@ package evaluator
 
 import (
 	"fmt"
+	"math"
 	"os"
 
 	"github.com/batt0s/rizzy/object"
 )
 
 var builtins = map[string]*object.Builtin{
-	"puts":  &object.Builtin{Fn: builtin_puts},
-	"rizz":  &object.Builtin{Fn: builtin_puts},
-	"exit":  &object.Builtin{Fn: builtin_exit},
+	// Basics
+	"puts": &object.Builtin{Fn: builtin_puts},
+	"rizz": &object.Builtin{Fn: builtin_puts},
+	"exit": &object.Builtin{Fn: builtin_exit},
+	// Array Operations
 	"len":   &object.Builtin{Fn: builtin_len},
 	"first": &object.Builtin{Fn: builtin_first},
 	"last":  &object.Builtin{Fn: builtin_last},
@@ -18,6 +21,9 @@ var builtins = map[string]*object.Builtin{
 	"tail":  &object.Builtin{Fn: builtin_tail},
 	"push":  &object.Builtin{Fn: builtin_push},
 	"pop":   &object.Builtin{Fn: builtin_pop},
+	// Math
+	"pow":  &object.Builtin{Fn: builtin_pow},
+	"sqrt": &object.Builtin{Fn: builtin_sqrt},
 }
 
 func builtin_puts(args ...object.Object) object.Object {
@@ -159,7 +165,7 @@ func builtin_pop(args ...object.Object) object.Object {
 	}
 
 	if args[0].Type() != object.ARRAY_OBJ {
-		return newError("argument to `push` must be ARRAY, got %s",
+		return newError("argument to `pop` must be ARRAY, got %s",
 			args[0].Type())
 	}
 
@@ -172,7 +178,7 @@ func builtin_pop(args ...object.Object) object.Object {
 	idx := length - 1
 	if len(args) == 2 {
 		if args[1].Type() != object.INTEGER_OBJ {
-			return newError("argument to `push` must be INTEGER, got %s",
+			return newError("argument to `pop` must be INTEGER, got %s",
 				args[1].Type())
 		}
 		idx = int(args[1].(*object.Integer).Value)
@@ -185,4 +191,52 @@ func builtin_pop(args ...object.Object) object.Object {
 	copy(newElements, append(arr.Elements[:idx], arr.Elements[idx+1:]...))
 
 	return &object.Array{Elements: newElements}
+}
+
+// Math
+func builtin_pow(args ...object.Object) object.Object {
+	if len(args) != 2 {
+		return newError("wrong number of arguments. got=%d, want=2",
+			len(args))
+	}
+
+	if args[0].Type() != object.INTEGER_OBJ || args[1].Type() != object.INTEGER_OBJ {
+		return newError("argument to `pow` must be INTEGER, got %s and %s",
+			args[0].Type(), args[1].Type())
+	}
+
+	n := float64(args[0].(*object.Integer).Value)
+	pow := float64(args[1].(*object.Integer).Value)
+
+	if pow < 0 {
+		return newError("argument to `pow` must be positive, got %s",
+			args[1].Inspect())
+	}
+
+	result := math.Pow(n, pow)
+	resultObj := &object.Integer{Value: int64(result)}
+	return resultObj
+}
+
+func builtin_sqrt(args ...object.Object) object.Object {
+	if len(args) != 1 {
+		return newError("wrong number of arguments. got=%d, want=1",
+			len(args))
+	}
+
+	if args[0].Type() != object.INTEGER_OBJ {
+		return newError("argument to `sqrt` must be INTEGER, got %s",
+			args[0].Type())
+	}
+
+	n := float64(args[0].(*object.Integer).Value)
+
+	if n < 0 {
+		return newError("argument to `sqrt` must be positive, got %s",
+			args[0].Inspect())
+	}
+
+	result := math.Sqrt(n)
+	resultObj := &object.Integer{Value: int64(result)}
+	return resultObj
 }

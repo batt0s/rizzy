@@ -365,7 +365,19 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`pop([1, 2, 3], 0)`, []int{2, 3}},
 		{`pop([1, 2, 3], 4)`, []int{1, 2, 3}},
 		{`pop([])`, []int{}},
-		{`pop([1, 2, 3], "a")`, "argument to `push` must be INTEGER, got STRING"},
+		{`pop([1, 2, 3], "a")`, "argument to `pop` must be INTEGER, got STRING"},
+		{`pow()`, "wrong number of arguments. got=0, want=2"},
+		{`pow(1)`, "wrong number of arguments. got=1, want=2"},
+		{`pow(2, 2)`, 4},
+		{`pow(1, "a")`, "argument to `pow` must be INTEGER, got INTEGER and STRING"},
+		{`pow(1, -1)`, "argument to `pow` must be positive, got -1"},
+		{`pow("a", 1)`, "argument to `pow` must be INTEGER, got STRING and INTEGER"},
+		{`pow(-1, 2)`, 1},
+		{`pow(1, 1, 1)`, "wrong number of arguments. got=3, want=2"},
+		{`sqrt()`, "wrong number of arguments. got=0, want=1"},
+		{`sqrt(1)`, 1},
+		{`sqrt("a")`, "argument to `sqrt` must be INTEGER, got STRING"},
+		{`sqrt(-1)`, "argument to `sqrt` must be positive, got -1"},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
