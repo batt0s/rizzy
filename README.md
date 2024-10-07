@@ -10,7 +10,7 @@ Rizzy is language with 5 data types (Integer, Boolean, String, Array, Map) and a
 
 With `def` keyword you can define variables and functions. 
 
-```
+```rb
 def variable_name = 1;
 def name = "Rizzler";
 def arr = ["I", "am", "The", "Rizzler"];
@@ -20,21 +20,21 @@ def boolean_variable = true;
 
 Define functions and use call expression.
 
-```
+```rb
 def factorial = func(x) { if (x == 0) { 1 } else { x * factorial(x - 1) } };
 factorial(4);
 ```
 
 Use index expression.
 
-```
+```rb
 def arr = [1, 2, 3];
 arr[0];
 ```
 
 Use hashmap.
 
-```
+```rb
 def mymap = {"name": "Rizzler", "version": 1};
 mymap["name"];
 ```
