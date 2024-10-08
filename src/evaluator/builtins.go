@@ -10,6 +10,7 @@ import (
 
 var builtins = map[string]*object.Builtin{
 	// Basics
+	"type": &object.Builtin{Fn: builtin_type},
 	"puts": &object.Builtin{Fn: builtin_puts},
 	"rizz": &object.Builtin{Fn: builtin_puts},
 	"exit": &object.Builtin{Fn: builtin_exit},
@@ -24,6 +25,14 @@ var builtins = map[string]*object.Builtin{
 	// Math
 	"pow":  &object.Builtin{Fn: builtin_pow},
 	"sqrt": &object.Builtin{Fn: builtin_sqrt},
+}
+
+func builtin_type(args ...object.Object) object.Object {
+	if len(args) != 1 {
+		return newError("wrong number of arguments. got=%d, want=1", len(args))
+	}
+
+	return &object.String{Value: string(args[0].Type())}
 }
 
 func builtin_puts(args ...object.Object) object.Object {
