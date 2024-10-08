@@ -101,6 +101,13 @@ func (l *Lexer) NextToken() token.Token {
 		} else if isDigit(l.ch) {
 			tok.Type = token.INT
 			tok.Literal = l.readNumber()
+			if l.ch == '.' {
+				tok.Type = token.FLOAT
+				l.readChar()
+				if isDigit(l.ch) {
+					tok.Literal += "." + l.readNumber()
+				}
+			}
 			return tok
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch)

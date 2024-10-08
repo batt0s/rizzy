@@ -36,6 +36,34 @@ func TestEvalIntegerExpression(t *testing.T) {
 	}
 }
 
+func TestEvalFloatExpression(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected float64
+	}{
+		{"5.1", 5.1},
+		{"10.", 10.0},
+		{"-5.2", -5.2},
+		{"-10.1", -10.1},
+		{"5.1 + 5.1 + 5.2 + 5.2 - 10.6", 10.0},
+		{"2.5 * 2. * 2. * 2. * 2.", 40.0},
+		{"-50. + 100. + -50.", 0},
+		{"5. * 2.5 + 10.", 22.5},
+		{"5. + 2. * 10.5", 26.0},
+		{"20. + 2. * -10.", 0},
+		{"50. / 2. * 2. + 10.", 60},
+		{"2. * (5. + 10.)", 30},
+		{"3. * 3. * 3. + 10.", 37},
+		{"3. * (3. * 3.) + 10.", 37},
+		{"(5. + 10. * 2. + 15. / 3.) * 2. + -10.1", 49.9},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		testFloatObject(t, evaluated, tt.expected)
+	}
+}
+
 func testEval(input string) object.Object {
 	l := lexer.New(input)
 	p := parser.New(l)
@@ -53,6 +81,22 @@ func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
 
 	if result.Value != expected {
 		t.Errorf("object has wrong value. got=%d, want=%d",
+			result.Value, expected)
+		return false
+	}
+
+	return true
+}
+
+func testFloatObject(t *testing.T, obj object.Object, expected float64) bool {
+	result, ok := obj.(*object.Float)
+	if !ok {
+		t.Errorf("object is not Float. got=%T (%+v)", obj, obj)
+		return false
+	}
+
+	if !floatNearlyEqual(result.Value, expected) {
+		t.Errorf("object has wrong value. got=%f, want=%f",
 			result.Value, expected)
 		return false
 	}

@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/batt0s/rizzy/ast"
 	"github.com/batt0s/rizzy/object"
@@ -23,6 +24,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	// Expressions
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
+	case *ast.FloatLiteral:
+		return &object.Float{Value: node.Value}
 	case *ast.Boolean:
 		return nativeBooltoBooleanObject(node.Value)
 	case *ast.PrefixExpression:
@@ -166,12 +169,16 @@ func evalBangOperatorExpression(right object.Object) object.Object {
 }
 
 func evalMinusPrefixOperatorExpression(right object.Object) object.Object {
-	if right.Type() != object.INTEGER_OBJ {
+	switch right.Type() {
+	case object.INTEGER_OBJ:
+		value := right.(*object.Integer).Value
+		return &object.Integer{Value: -value}
+	case object.FLOAT_OBJ:
+		value := right.(*object.Float).Value
+		return &object.Float{Value: -value}
+	default:
 		return newError("unknown operator: -%s", right.Type())
 	}
-
-	value := right.(*object.Integer).Value
-	return &object.Integer{Value: -value}
 }
 
 func evalInfixExpression(operator string, left, right object.Object) object.Object {
@@ -180,6 +187,8 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 		return evalIntegerInfixExpression(operator, left, right)
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
 		return evalStringInfixExpression(operator, left, right)
+	case left.Type() == object.FLOAT_OBJ && right.Type() == object.FLOAT_OBJ:
+		return evalFloatInfixExpression(operator, left, right)
 	case operator == "==":
 		return nativeBooltoBooleanObject(left == right)
 	case operator == "!=":
@@ -214,6 +223,33 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 		return nativeBooltoBooleanObject(leftVal == rightVal)
 	case "!=":
 		return nativeBooltoBooleanObject(leftVal != rightVal)
+	default:
+		return newError("unknown operator: %s %s %s",
+			left.Type(), operator, right.Type())
+	}
+}
+
+func evalFloatInfixExpression(operator string, left, right object.Object) object.Object {
+	leftVal := left.(*object.Float).Value
+	rightVal := right.(*object.Float).Value
+
+	switch operator {
+	case "+":
+		return &object.Float{Value: leftVal + rightVal}
+	case "-":
+		return &object.Float{Value: leftVal - rightVal}
+	case "*":
+		return &object.Float{Value: leftVal * rightVal}
+	case "/":
+		return &object.Float{Value: leftVal / rightVal}
+	case "<":
+		return nativeBooltoBooleanObject(leftVal < rightVal)
+	case ">":
+		return nativeBooltoBooleanObject(leftVal > rightVal)
+	case "==":
+		return nativeBooltoBooleanObject(floatNearlyEqual(leftVal, rightVal))
+	case "!=":
+		return nativeBooltoBooleanObject(!floatNearlyEqual(leftVal, rightVal))
 	default:
 		return newError("unknown operator: %s %s %s",
 			left.Type(), operator, right.Type())
@@ -391,4 +427,22 @@ func evalHashIndexExpression(left, index object.Object) object.Object {
 	}
 
 	return pair.Value
+}
+
+func floatNearlyEqual(f1, f2 float64) bool {
+	const epsilon = 0.0001
+	const min_float = math.SmallestNonzeroFloat64
+	const max_float = math.MaxFloat64
+
+	absf1 := math.Abs(f1)
+	absf2 := math.Abs(f2)
+	diff := math.Abs(f1 - f2)
+
+	if f1 == f2 {
+		return true
+	} else if f1 == 0 || f2 == 0 || absf1+absf2 < min_float {
+		return diff < (epsilon * min_float)
+	} else {
+		return diff/math.Min(absf1+absf2, max_float) < epsilon
+	}
 }

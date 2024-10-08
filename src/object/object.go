@@ -18,6 +18,7 @@ type Object interface {
 
 const (
 	INTEGER_OBJ      = "INTEGER"
+	FLOAT_OBJ        = "FLOAT"
 	BOOLEAN_OBJ      = "BOOLEAN"
 	STRING_OBJ       = "STRING"
 	ARRAY_OBJ        = "ARRAY"
@@ -39,6 +40,18 @@ func (i *Integer) Type() ObjectType {
 }
 func (i *Integer) Inspect() string {
 	return fmt.Sprintf("%d", i.Value)
+}
+
+// Float
+type Float struct {
+	Value float64
+}
+
+func (f *Float) Type() ObjectType {
+	return FLOAT_OBJ
+}
+func (f *Float) Inspect() string {
+	return fmt.Sprintf("%f", f.Value)
 }
 
 // Boolean
