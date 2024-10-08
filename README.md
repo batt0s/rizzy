@@ -2,18 +2,19 @@
 
 ## About Rizzy 
 
-I made Rizzy as a learning project. I followed Thorsten Ball's book “Writing An Interpreter In Go” and I made a few changes, mostly changing the name of the keywords and adding some built-in functions for arrays. I just finished the book and I want to do some different things in the future, like adding some data types (like 'float'), some changes in language design. Before I started coding I never thought about the design because I had no idea how to make an interpreter. Now that I understand a little bit, I can think about it and make some changes. I learned a lot and I want to go beyond the book to keep learning. There are still a lot to do and a lot of problems I know about.
+I made Rizzy as a learning project. I followed Thorsten Ball's book “Writing An Interpreter In Go” and I made a few changes, mostly changing the name of the keywords and adding some built-in functions for arrays. I just finished the book and I want to do some different things in the future, like adding some data types, some changes in language design. Before I started coding I never thought about the design because I had no idea how to make an interpreter. Now that I understand a little bit, I can think about it and make some changes. I learned a lot and I want to go beyond the book to keep learning. There are still a lot to do and a lot of problems I know about.
 
-Rizzy is language with 5 data types (Integer, Boolean, String, Array, Map) and a NULL. Rizzy has first-class functions with closure. Everything in Rizzy is a expression (function) except def (Define) statements and return statements. So if you type `5` it's actually a expression that evaluates 5. 
+Rizzy is language with 6 data types (`Integer`, `Float`, `Boolean`, `String`, `Array`, `Map`) and a `NULL`. Rizzy has first-class functions with closure. Everything in Rizzy is a expression (function) except def (Define) statements and return statements. So if you type `5` it's actually a expression that evaluates 5. 
 
 ### Examples
 
 With `def` keyword you can define variables and functions. 
 
 ```rb
-def variable_name = 1;
+def integer_var = 1;
+def float_var = 1.;
 def name = "Rizzler";
-def arr = ["I", "am", "The", "Rizzler"];
+def arr = ["I", "am", "The", "Rizzler", "!", 1, 2];
 def arr_of_nums = [1, 2, 3];
 def boolean_variable = true;
 ```
@@ -96,6 +97,13 @@ Takes 2 arguments. Takes an ARRAY as first argument and an Expression as second.
 
 Takes 1 arguments and 1 optional argument. Takes an ARRAY as first argument and an Expression as second. Returns an ARRAY without the element with index of result of the given expression.
 
+##### `pow`
+
+Takes 2 arguments. Takes two INTEGER. Returns an INTEGER. `pow(2,2)` = `4`
+
+##### `sqrt`
+
+Takes 1 argument. Takes an INTEGER. Returns an INTEGER. `sqrt(4)` = `2`
 
 ## License
 
