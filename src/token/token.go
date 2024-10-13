@@ -25,9 +25,15 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 	LT       = "<"
+	LTE      = "<="
 	GT       = ">"
+	GTE      = ">="
 	EQ       = "=="
 	NOT_EQ   = "!="
+	BIT_AND  = "&"
+	BIT_OR   = "|"
+	AND      = "&&"
+	OR       = "||"
 
 	// Delimeters
 	COMMA     = ","

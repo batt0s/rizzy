@@ -183,12 +183,6 @@ func evalMinusPrefixOperatorExpression(right object.Object) object.Object {
 
 func evalInfixExpression(operator string, left, right object.Object) object.Object {
 	switch {
-	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
-		return evalIntegerInfixExpression(operator, left, right)
-	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
-		return evalStringInfixExpression(operator, left, right)
-	case left.Type() == object.FLOAT_OBJ && right.Type() == object.FLOAT_OBJ:
-		return evalFloatInfixExpression(operator, left, right)
 	case operator == "==":
 		return nativeBooltoBooleanObject(left == right)
 	case operator == "!=":
@@ -196,6 +190,14 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	case left.Type() != right.Type():
 		return newError("type mismatch: %s %s %s",
 			left.Type(), operator, right.Type())
+	case left.Type() == object.BOOLEAN_OBJ && right.Type() == object.BOOLEAN_OBJ:
+		return evalBooleanInfixExpression(operator, left, right)
+	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
+		return evalIntegerInfixExpression(operator, left, right)
+	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
+		return evalStringInfixExpression(operator, left, right)
+	case left.Type() == object.FLOAT_OBJ && right.Type() == object.FLOAT_OBJ:
+		return evalFloatInfixExpression(operator, left, right)
 	default:
 		return newError("unknown operator: %s %s %s",
 			left.Type(), operator, right.Type())
@@ -217,12 +219,20 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 		return &object.Integer{Value: leftVal / rightVal}
 	case "<":
 		return nativeBooltoBooleanObject(leftVal < rightVal)
+	case "<=":
+		return nativeBooltoBooleanObject(leftVal <= rightVal)
 	case ">":
 		return nativeBooltoBooleanObject(leftVal > rightVal)
+	case ">=":
+		return nativeBooltoBooleanObject(leftVal >= rightVal)
 	case "==":
 		return nativeBooltoBooleanObject(leftVal == rightVal)
 	case "!=":
 		return nativeBooltoBooleanObject(leftVal != rightVal)
+	case "&":
+		return &object.Integer{Value: leftVal & rightVal}
+	case "|":
+		return &object.Integer{Value: leftVal | rightVal}
 	default:
 		return newError("unknown operator: %s %s %s",
 			left.Type(), operator, right.Type())
@@ -244,8 +254,12 @@ func evalFloatInfixExpression(operator string, left, right object.Object) object
 		return &object.Float{Value: leftVal / rightVal}
 	case "<":
 		return nativeBooltoBooleanObject(leftVal < rightVal)
+	case "<=":
+		return nativeBooltoBooleanObject(leftVal <= rightVal)
 	case ">":
 		return nativeBooltoBooleanObject(leftVal > rightVal)
+	case ">=":
+		return nativeBooltoBooleanObject(leftVal >= rightVal)
 	case "==":
 		return nativeBooltoBooleanObject(floatNearlyEqual(leftVal, rightVal))
 	case "!=":
@@ -444,5 +458,20 @@ func floatNearlyEqual(f1, f2 float64) bool {
 		return diff < (epsilon * min_float)
 	} else {
 		return diff/math.Min(absf1+absf2, max_float) < epsilon
+	}
+}
+
+func evalBooleanInfixExpression(operator string, left, right object.Object) object.Object {
+	leftVal := left.(*object.Boolean).Value
+	rightVal := right.(*object.Boolean).Value
+
+	switch operator {
+	case "&&":
+		return nativeBooltoBooleanObject(leftVal && rightVal)
+	case "||":
+		return nativeBooltoBooleanObject(leftVal || rightVal)
+	default:
+		return newError("unknown operator: %s %s %s",
+			left.Type(), operator, right.Type())
 	}
 }

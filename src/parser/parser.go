@@ -12,20 +12,28 @@ import (
 const (
 	_ int = iota
 	LOWEST
-	EQUALS      // ==
-	LESSGREATER // > or <
-	SUM         // +
-	PRODUCT     // *
+	LOGICAL     // &&, ||
+	EQUALS      // ==, !=
+	LESSGREATER // >, <, <=, >=
+	BITWISE     // &, |
+	SUM         // +, -
+	PRODUCT     // *, /
 	PREFIX      // -X or !X
 	CALL        // myFunction(X)
 	INDEX       // array[index]
 )
 
 var precedences = map[token.TokenType]int{
+	token.AND:      LOGICAL,
+	token.OR:       LOGICAL,
 	token.EQ:       EQUALS,
 	token.NOT_EQ:   EQUALS,
 	token.LT:       LESSGREATER,
+	token.LTE:      LESSGREATER,
 	token.GT:       LESSGREATER,
+	token.GTE:      LESSGREATER,
+	token.BIT_AND:  BITWISE,
+	token.BIT_OR:   BITWISE,
 	token.PLUS:     SUM,
 	token.MINUS:    SUM,
 	token.SLASH:    PRODUCT,
@@ -78,7 +86,13 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.EQ, p.parseInfixExpression)
 	p.registerInfix(token.NOT_EQ, p.parseInfixExpression)
 	p.registerInfix(token.LT, p.parseInfixExpression)
+	p.registerInfix(token.LTE, p.parseInfixExpression)
 	p.registerInfix(token.GT, p.parseInfixExpression)
+	p.registerInfix(token.GTE, p.parseInfixExpression)
+	p.registerInfix(token.AND, p.parseInfixExpression)
+	p.registerInfix(token.OR, p.parseInfixExpression)
+	p.registerInfix(token.BIT_AND, p.parseInfixExpression)
+	p.registerInfix(token.BIT_OR, p.parseInfixExpression)
 	p.registerInfix(token.LPAREN, p.parseCallExpression)
 	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
 

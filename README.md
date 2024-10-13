@@ -11,11 +11,11 @@ Rizzy is language with 6 data types (`Integer`, `Float`, `Boolean`, `String`, `A
 - [x] Floats
 - [ ] Error traceback (added for parse errors, no traceback for Error objects for now)
 - [ ] Better terminal integration (use arrow keys on REPL)
-- [ ] GTE ("<=") and LTE (">=")
-- [ ] Comparing INTEGER and FLOAT
+- [x] GTE ("<=") and LTE (">=")
 - [ ] INTEGER -> FLOAT and FLOAT -> INT
-- [ ] AND ("&&") and OR ("||")
+- [x] AND ("&&", "&") and OR ("||", "|")
 - [ ] Built-in function for formatting ("fmt()")
+- [ ] Range operator ["n..n+m"]
 
 
 
