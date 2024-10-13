@@ -15,7 +15,7 @@ Rizzy is language with 6 data types (`Integer`, `Float`, `Boolean`, `String`, `A
 - [ ] INTEGER -> FLOAT and FLOAT -> INT
 - [x] AND ("&&", "&") and OR ("||", "|")
 - [ ] Built-in function for formatting ("fmt()")
-- [ ] Range operator ["n..n+m"]
+- [ ] Range operator ("[n..n+m]")
 
 
 
