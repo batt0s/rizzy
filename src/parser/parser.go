@@ -41,7 +41,7 @@ type (
 
 type Parser struct {
 	l      *lexer.Lexer
-	errors []string
+	errors []Error
 
 	curToken  token.Token
 	peekToken token.Token
@@ -53,7 +53,7 @@ type Parser struct {
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{
 		l:      l,
-		errors: []string{},
+		errors: []Error{},
 	}
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
@@ -94,7 +94,11 @@ func (p *Parser) nextToken() {
 }
 
 func (p *Parser) Errors() []string {
-	return p.errors
+	msgs := []string{}
+	for _, err := range p.errors {
+		msgs = append(msgs, err.String())
+	}
+	return msgs
 }
 
 func (p *Parser) ParseProgram() *ast.Program {
@@ -173,7 +177,8 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 func (p *Parser) peekError(t token.TokenType) {
 	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
 		t, p.peekToken.Type)
-	p.errors = append(p.errors, msg)
+	l, c := p.l.Trace()
+	p.errors = append(p.errors, Error{msg: msg, line: l, col: c})
 }
 
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
@@ -249,7 +254,8 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
 	if err != nil {
 		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
-		p.errors = append(p.errors, msg)
+		l, c := p.l.Trace()
+		p.errors = append(p.errors, Error{msg: msg, line: l, col: c})
 		return nil
 	}
 
@@ -266,7 +272,8 @@ func (p *Parser) parseFloatLiteral() ast.Expression {
 	value, err := strconv.ParseFloat(p.curToken.Literal, 64)
 	if err != nil {
 		msg := fmt.Sprintf("could not parse %q as float", p.curToken.Literal)
-		p.errors = append(p.errors, msg)
+		l, c := p.l.Trace()
+		p.errors = append(p.errors, Error{msg: msg, line: l, col: c})
 		return nil
 	}
 
@@ -277,7 +284,8 @@ func (p *Parser) parseFloatLiteral() ast.Expression {
 
 func (p *Parser) noPrefixParserFnError(t token.TokenType) {
 	msg := fmt.Sprintf("no prefix parse function for %s found", t)
-	p.errors = append(p.errors, msg)
+	l, c := p.l.Trace()
+	p.errors = append(p.errors, Error{msg: msg, line: l, col: c})
 }
 
 func (p *Parser) parsePrefixExpression() ast.Expression {

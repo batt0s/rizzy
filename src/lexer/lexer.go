@@ -7,10 +7,17 @@ type Lexer struct {
 	position     int
 	readPosition int
 	ch           byte
+
+	line int
+	col  int
 }
 
 func New(input string) *Lexer {
 	l := &Lexer{input: input}
+	l.position = 0
+	l.readPosition = 0
+	l.line = 1
+	l.col = 1
 	l.readChar()
 	return l
 }
@@ -20,9 +27,19 @@ func (l *Lexer) readChar() {
 		l.ch = 0
 	} else {
 		l.ch = l.input[l.readPosition]
+		if l.ch == '\n' {
+			l.line += 1
+			l.col = 1
+		} else {
+			l.col += 1
+		}
 	}
 	l.position = l.readPosition
 	l.readPosition += 1
+}
+
+func (l *Lexer) Trace() (int, int) {
+	return l.line, l.col
 }
 
 func newToken(tokenType token.TokenType, ch byte) token.Token {
