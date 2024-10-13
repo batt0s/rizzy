@@ -1,5 +1,8 @@
 # Rizzy
 
+![Test workflow](https://github.com/batt0s/rizzy/actions/workflows/test.yml/badge.svg)
+![Build workflow](https://github.com/batt0s/rizzy/actions/workflows/build.yml/badge.svg)
+
 ## About Rizzy 
 
 I made Rizzy as a learning project. I followed Thorsten Ball's book “Writing An Interpreter In Go” and I made a few changes, mostly changing the name of the keywords and adding some built-in functions for arrays. I just finished the book and I want to do some different things in the future, like adding some data types, some changes in language design. Before I started coding I never thought about the design because I had no idea how to make an interpreter. Now that I understand a little bit, I can think about it and make some changes. I learned a lot and I want to go beyond the book to keep learning. There are still a lot to do and a lot of problems I know about.
