@@ -27,7 +27,7 @@ func main() {
 			fmt.Printf("There been an error while opening the file: %s\n", filePath)
 			os.Exit(1)
 		}
-		repl.Run(file, os.Stdout)
+		repl.Start(file, os.Stdout)
 	} else {
 		fmt.Printf("Hello %s! This is the Rizzler!\n", user.Username)
 		repl.Start(os.Stdin, os.Stdout)
