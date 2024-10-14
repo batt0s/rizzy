@@ -17,10 +17,9 @@ Rizzy is language with 6 data types (`Integer`, `Float`, `Boolean`, `String`, `A
 - [x] GTE ("<=") and LTE (">=")
 - [ ] INTEGER -> FLOAT and FLOAT -> INT
 - [x] AND ("&&", "&") and OR ("||", "|")
-- [ ] Built-in function for formatting ("fmt()")
+- [x] Built-in function for formatting ("fmt()")
 - [ ] Range operator ("[n..n+m]")
 - [ ] Make runable files
-- [ ] Add tests for built-in functions
 
 
 
@@ -86,6 +85,13 @@ Exits the interpreter, with an optional exit status code (default=0).
 
 Returns the length of the input as INTEGER. Takes 1 input, ARRAY or STRING.
 
+#### `fmt`
+
+Format string. Use %% and replace with order. Example : 
+```
+>>> fmt("%% x %% = %%", 2, 2, 2*2)
+Rizzler: 2 x 2 = 4
+```
 
 #### `first`
 

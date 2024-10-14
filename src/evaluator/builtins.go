@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strings"
 
 	"github.com/batt0s/rizzy/object"
 )
@@ -13,6 +14,7 @@ var builtins = map[string]*object.Builtin{
 	"type": &object.Builtin{Fn: builtin_type},
 	"puts": &object.Builtin{Fn: builtin_puts},
 	"rizz": &object.Builtin{Fn: builtin_puts},
+	"fmt":  &object.Builtin{Fn: builtin_fmt},
 	"exit": &object.Builtin{Fn: builtin_exit},
 	// Array Operations
 	"len":   &object.Builtin{Fn: builtin_len},
@@ -41,6 +43,26 @@ func builtin_puts(args ...object.Object) object.Object {
 	}
 
 	return NULL
+}
+
+func builtin_fmt(args ...object.Object) object.Object {
+	if len(args) < 2 {
+		return newError("wrong number of arguments. got=%d, want=2", len(args))
+	}
+	if args[0].Type() != object.STRING_OBJ {
+		return newError("argument to `fmt` must be STRING, got %s",
+			args[0].Type())
+	}
+	s := args[0].(*object.String).Value
+	format := strings.Count(s, "%%")
+	if format != len(args)-1 {
+		return newError("wrong number of arguments. got=%d, want=%d",
+			len(args), format+1)
+	}
+	for _, arg := range args[1:] {
+		s = strings.Replace(s, "%%", arg.Inspect(), 1)
+	}
+	return &object.String{Value: s}
 }
 
 func builtin_exit(args ...object.Object) object.Object {

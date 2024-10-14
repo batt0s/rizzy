@@ -88,6 +88,22 @@ func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
 	return true
 }
 
+func testStringObject(t *testing.T, obj object.Object, expected string) bool {
+	result, ok := obj.(*object.String)
+	if !ok {
+		t.Errorf("object is not String. got=%T (%+v)", obj, obj)
+		return false
+	}
+
+	if result.Value != expected {
+		t.Errorf("object has wrong value. got=%s, want=%s",
+			result.Value, expected)
+		return false
+	}
+
+	return true
+}
+
 func testFloatObject(t *testing.T, obj object.Object, expected float64) bool {
 	result, ok := obj.(*object.Float)
 	if !ok {
@@ -426,6 +442,13 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`sqrt(1)`, 1},
 		{`sqrt("a")`, "argument to `sqrt` must be INTEGER, got STRING"},
 		{`sqrt(-1)`, "argument to `sqrt` must be positive, got -1"},
+		{`fmt()`, "wrong number of arguments. got=0, want=2"},
+		{`fmt("a")`, "wrong number of arguments. got=1, want=2"},
+		{`fmt("%%", 1)`, "1"},
+		{`fmt("a%%c", "b")`, "abc"},
+		{`fmt("%% x %% = %%", 2, 2, 2*2)`, "2 x 2 = 4"},
+		{`fmt(1,1)`, "argument to `fmt` must be STRING, got INTEGER"},
+		{`fmt("%% %%", 1)`, "wrong number of arguments. got=2, want=3"},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
@@ -435,8 +458,7 @@ func TestBuiltinFunctions(t *testing.T) {
 		case string:
 			errObj, ok := evaluated.(*object.Error)
 			if !ok {
-				t.Errorf("object is not Error. got=%T (%+v)",
-					evaluated, evaluated)
+				testStringObject(t, evaluated, expected)
 				continue
 			}
 			if errObj.Message != expected {
