@@ -22,12 +22,7 @@ func main() {
 			fmt.Printf("Couldn't find file: %s\n", filePath)
 			os.Exit(1)
 		}
-		file, err := os.Open(filePath)
-		if err != nil {
-			fmt.Printf("There been an error while opening the file: %s\n", filePath)
-			os.Exit(1)
-		}
-		repl.Start(file, os.Stdout)
+		repl.RunFile(filePath, os.Stdout)
 	} else {
 		fmt.Printf("Hello %s! This is the Rizzler!\n", user.Username)
 		repl.Start(os.Stdin, os.Stdout)

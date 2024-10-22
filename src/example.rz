@@ -1,0 +1,11 @@
+def list = [1,2,3];
+
+def sum = func(list) {
+    if(len(list) == 0) {
+        0
+    } else {
+        list[0] + sum(tail(list))
+    }
+};
+
+sum(list);
