@@ -29,7 +29,8 @@ var builtins = map[string]*object.Builtin{
 	"pow":  &object.Builtin{Fn: builtin_pow},
 	"sqrt": &object.Builtin{Fn: builtin_sqrt},
 	// Types
-	"int": &object.Builtin{Fn: builtin_int},
+	"int":   &object.Builtin{Fn: builtin_int},
+	"float": &object.Builtin{Fn: builtin_float},
 }
 
 func builtin_type(args ...object.Object) object.Object {
@@ -324,11 +325,57 @@ func builtin_int(args ...object.Object) object.Object {
 		s := args[0].(*object.String).Value
 		n, err := strconv.Atoi(s)
 		if err != nil {
-			return &object.Error{Message: "error transforming string to int, check given string"}
+			return &object.Error{Message: "error parsing int, check given string"}
 		}
 		returnValue = int64(n)
 	}
 
-	return &object.Integer{Value: int64(returnValue)}
+	return &object.Integer{Value: returnValue}
+
+}
+
+func builtin_float(args ...object.Object) object.Object {
+	if len(args) != 1 {
+		return newError("wrong number of arguments. got=%d, want=1",
+			len(args))
+	}
+
+	isValidType := func() bool {
+		switch args[0].Type() {
+		case
+			object.INTEGER_OBJ,
+			object.FLOAT_OBJ,
+			object.STRING_OBJ:
+			return true
+		}
+		return false
+	}
+
+	if !isValidType() {
+		return newError("argument to `float` must be INTEGER, FLOAT or STRING, got %s",
+			args[0].Type())
+	}
+
+	var returnValue float64
+
+	if args[0].Type() == object.INTEGER_OBJ {
+		n := args[0].(*object.Integer).Value
+		returnValue = float64(n)
+	}
+
+	if args[0].Type() == object.FLOAT_OBJ {
+		returnValue = args[0].(*object.Float).Value
+	}
+
+	if args[0].Type() == object.STRING_OBJ {
+		s := args[0].(*object.String).Value
+		n, err := strconv.ParseFloat(s, 64)
+		if err != nil {
+			return &object.Error{Message: "error parsing float, check given string"}
+		}
+		returnValue = n
+	}
+
+	return &object.Float{Value: returnValue}
 
 }
