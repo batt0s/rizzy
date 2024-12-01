@@ -449,6 +449,11 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`fmt("%% x %% = %%", 2, 2, 2*2)`, "2 x 2 = 4"},
 		{`fmt(1,1)`, "argument to `fmt` must be STRING, got INTEGER"},
 		{`fmt("%% %%", 1)`, "wrong number of arguments. got=2, want=3"},
+		{`int()`, "wrong number of arguments. got=0, want=1"},
+		{`int(1)`, 1},
+		{`int("1")`, 1},
+		{`int(1.1)`, 1},
+		{`int("1.1")`, "error transforming string to int, check given string"},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)

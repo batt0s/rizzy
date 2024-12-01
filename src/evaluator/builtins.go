@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/batt0s/rizzy/object"
@@ -27,6 +28,8 @@ var builtins = map[string]*object.Builtin{
 	// Math
 	"pow":  &object.Builtin{Fn: builtin_pow},
 	"sqrt": &object.Builtin{Fn: builtin_sqrt},
+	// Types
+	"int": &object.Builtin{Fn: builtin_int},
 }
 
 func builtin_type(args ...object.Object) object.Object {
@@ -270,4 +273,62 @@ func builtin_sqrt(args ...object.Object) object.Object {
 	result := math.Sqrt(n)
 	resultObj := &object.Integer{Value: int64(result)}
 	return resultObj
+}
+
+// Types
+func builtin_int(args ...object.Object) object.Object {
+	if len(args) != 1 {
+		return newError("wrong number of arguments. got=%d, want=1",
+			len(args))
+	}
+
+	isValidType := func() bool {
+		switch args[0].Type() {
+		case
+			object.INTEGER_OBJ,
+			object.FLOAT_OBJ,
+			object.STRING_OBJ,
+			object.BOOLEAN_OBJ:
+			return true
+		}
+		return false
+	}
+
+	if !isValidType() {
+		return newError("argument to `int` must be INTEGER, FLOAT, BOOLEAN or STRING, got %s",
+			args[0].Type())
+	}
+
+	var returnValue int64
+
+	if args[0].Type() == object.INTEGER_OBJ {
+		returnValue = args[0].(*object.Integer).Value
+	}
+
+	if args[0].Type() == object.FLOAT_OBJ {
+		n := args[0].(*object.Float).Value
+		returnValue = int64(n)
+	}
+
+	if args[0].Type() == object.BOOLEAN_OBJ {
+		n := args[0].(*object.Boolean).Value
+		switch n {
+		case true:
+			returnValue = int64(1)
+		case false:
+			returnValue = int64(0)
+		}
+	}
+
+	if args[0].Type() == object.STRING_OBJ {
+		s := args[0].(*object.String).Value
+		n, err := strconv.Atoi(s)
+		if err != nil {
+			return &object.Error{Message: "error transforming string to int, check given string"}
+		}
+		returnValue = int64(n)
+	}
+
+	return &object.Integer{Value: int64(returnValue)}
+
 }
