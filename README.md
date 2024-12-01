@@ -16,11 +16,12 @@ Rizzy is language with 6 data types (`Integer`, `Float`, `Boolean`, `String`, `A
 - [ ] Better terminal integration (use arrow keys on REPL)
 - [x] Multiline input
 - [x] GTE ("<=") and LTE (">=")
-- [ ] INTEGER -> FLOAT and FLOAT -> INT
+- [x] INTEGER -> FLOAT and FLOAT -> INT
 - [x] AND ("&&", "&") and OR ("||", "|")
 - [x] Built-in function for formatting ("fmt()")
 - [ ] Range operator ("[n..n+m]")
 - [x] Make runable files
+- [ ] Package system
 
 
 
