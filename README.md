@@ -13,7 +13,7 @@ Rizzy is language with 6 data types (`Integer`, `Float`, `Boolean`, `String`, `A
 
 - [x] Floats
 - [ ] Error traceback (added for parse errors, no traceback for Error objects for now)
-- [ ] Better terminal integration (use arrow keys on REPL)
+- [x] Better terminal integration (REPL, use arrow keys for history, persistent history file, tab completion)
 - [x] Multiline input
 - [x] GTE ("<=") and LTE (">=")
 - [x] INTEGER -> FLOAT and FLOAT -> INT
