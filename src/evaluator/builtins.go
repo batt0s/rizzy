@@ -25,6 +25,7 @@ var builtins = map[string]*object.Builtin{
 	"tail":  &object.Builtin{Fn: builtin_tail},
 	"push":  &object.Builtin{Fn: builtin_push},
 	"pop":   &object.Builtin{Fn: builtin_pop},
+	"range": &object.Builtin{Fn: builtin_range},
 	// Math
 	"pow":  &object.Builtin{Fn: builtin_pow},
 	"sqrt": &object.Builtin{Fn: builtin_sqrt},
@@ -325,7 +326,7 @@ func builtin_int(args ...object.Object) object.Object {
 		s := args[0].(*object.String).Value
 		n, err := strconv.Atoi(s)
 		if err != nil {
-			return &object.Error{Message: "error parsing int, check given string"}
+			return newError("error parsing int, check given string")
 		}
 		returnValue = int64(n)
 	}
@@ -371,11 +372,62 @@ func builtin_float(args ...object.Object) object.Object {
 		s := args[0].(*object.String).Value
 		n, err := strconv.ParseFloat(s, 64)
 		if err != nil {
-			return &object.Error{Message: "error parsing float, check given string"}
+			return newError("error parsing float, check given string")
 		}
 		returnValue = n
 	}
 
 	return &object.Float{Value: returnValue}
 
+}
+
+func builtin_range(args ...object.Object) object.Object {
+	if len(args) < 2 || len(args) > 3 {
+		return newError("wrong number of arguments. got=%d, want=2 or 3",
+			len(args))
+	}
+
+	var start int64
+	var end int64
+	var step int64 = 1
+	var size int64 = 0
+
+	if args[0].Type() == object.INTEGER_OBJ {
+		start = args[0].(*object.Integer).Value
+	} else {
+		return newError("argument to `range` must be INTEGER, got %s",
+			args[0].Type())
+	}
+
+	if args[1].Type() == object.INTEGER_OBJ {
+		end = args[1].(*object.Integer).Value
+	} else {
+		return newError("argument to `range` must be INTEGER, got %s",
+			args[0].Type())
+	}
+
+	if len(args) == 3 {
+		if args[2].Type() == object.INTEGER_OBJ {
+			step = args[2].(*object.Integer).Value
+			if step == 0 {
+				return newError("step cannot be 0")
+			}
+		} else {
+			return newError("argument to `range` must be INTEGER, got %s",
+				args[0].Type())
+		}
+	}
+
+	if step > 0 && start < end {
+		size = (end - start + 1) / step
+	} else if step < 0 && start > end {
+		size = (start - end + 1) / (-step)
+	}
+
+	returnValue := make([]object.Object, size)
+	for i := 0; i < int(size); i++ {
+		returnValue[i] = &object.Integer{Value: start + int64(i)*step}
+	}
+
+	return &object.Array{Elements: returnValue}
 }

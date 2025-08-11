@@ -19,7 +19,7 @@ Rizzy is language with 6 data types (`Integer`, `Float`, `Boolean`, `String`, `A
 - [x] INTEGER -> FLOAT and FLOAT -> INT
 - [x] AND ("&&", "&") and OR ("||", "|")
 - [x] Built-in function for formatting ("fmt()")
-- [ ] Range operator ("[n..n+m]")
+- [x] Range operator ("[n..n+m]")
 - [x] Make runable files
 - [ ] Package system
 
@@ -122,6 +122,10 @@ Takes 2 arguments. Takes an ARRAY as first argument and an Expression as second.
 #### `pop`
 
 Takes 1 arguments and 1 optional argument. Takes an ARRAY as first argument and an Expression as second. Returns an ARRAY without the element with index of result of the given expression.
+
+#### `range`
+
+Takes 2 arguments and 1 optional argument. All arguments must be INTEGERs. Takes first value (start) as first argument, last value (end) as second, and step argument as an optinal third argument. Step can be negative or positive, cannot be 0.
 
 #### `pow`
 

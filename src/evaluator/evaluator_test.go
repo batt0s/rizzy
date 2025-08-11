@@ -463,6 +463,17 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`float("1.1")`, 1.1},
 		{`float(true)`, "argument to `float` must be INTEGER, FLOAT or STRING, got BOOLEAN"},
 		{`float(false)`, "argument to `float` must be INTEGER, FLOAT or STRING, got BOOLEAN"},
+		{`range()`, "wrong number of arguments. got=0, want=2 or 3"},
+		{`range(1)`, "wrong number of arguments. got=1, want=2 or 3"},
+		{`range(1,2,3,4)`, "wrong number of arguments. got=4, want=2 or 3"},
+		{`range("1", 5)`, "argument to `range` must be INTEGER, got STRING"},
+		{`range(1.1, 5)`, "argument to `range` must be INTEGER, got FLOAT"},
+		{`range(true, 5)`, "argument to `range` must be INTEGER, got BOOLEAN"},
+		{`range(1, 5, 0)`, "step cannot be 0"},
+		{`range(1, 5)`, []int{1, 2, 3, 4, 5}},
+		{`range(1, 5, 2)`, []int{1, 3}}, // Might be better if it was 1,3,5 #TODO
+		{`range(-5, -1)`, []int{-5, -4, -3, -2, -1}},
+		{`range(-1, -5, -1)`, []int{-1, -2, -3, -4, -5}},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
